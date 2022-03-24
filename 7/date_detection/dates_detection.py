@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # https://automatetheboringstuff.com/2e/chapter7/
 
 # Date Detection
@@ -19,12 +21,13 @@ POSSIBLE_DATE_REGEX = re.compile(r'''
 ''', re.VERBOSE)
 
 
-def normalize_date(day, month, year):
+def normalize_date(date_tokens):
+    day, month, year = map(int, date_tokens)
     return f'{day:02d}/{month:02d}/{year}'
 
 
-def check_date(day, month, year):
-    day, month, year = int(day), int(month), int(year)
+def check_date(date_tokens):
+    day, month, year = map(int, date_tokens)
     if year < 1000 or 2999 < year:
         return False
     if month in (4, 6, 9, 11):
@@ -36,6 +39,18 @@ def check_date(day, month, year):
 
 def is_leap_year(year):
     return year % 400 == 0 or (year % 100 != 0 and year % 4 == 0)
+
+
+def upd_date_tokens(date_tokens, match_results):
+    date_tokens.extend(
+        map(normalize_date,
+            filter(check_date,
+                   map(get_date_tokens, match_results))))
+
+
+def get_date_tokens(match_result):
+    day, _, month, year = match_result
+    return (day, month, year)
 
 
 def parse_args():
@@ -50,7 +65,9 @@ def main():
     all_dates = []
     with open(filename, 'r') as f:
         for line in f:
-            pass
+            upd_date_tokens(all_dates, POSSIBLE_DATE_REGEX.findall(line))
+
+    print(*all_dates, sep="\n")
 
 
 if __name__ == '__main__':
