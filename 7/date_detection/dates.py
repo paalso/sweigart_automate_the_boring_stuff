@@ -2,11 +2,12 @@ import re
 
 POSSIBLE_DATE_REGEX = re.compile(r'''
     (0?[1-9]|[12][0-9]|3[01])
-    (\-|/)
+    (?P<sep>\-|/)
     (0?[1-9]|1[012])
-    \2
+    (?P=sep)
     (\d{4})
 ''', re.VERBOSE)
+# https://docs-python.ru/tutorial/ispolzovanie-reguljarnyh-vyrazhenij-python/imenovannye-gruppy-reguljarnyh-vyrazhenijah/
 
 
 def check_date(date):
