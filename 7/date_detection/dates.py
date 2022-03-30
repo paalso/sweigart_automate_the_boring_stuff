@@ -12,7 +12,7 @@ POSSIBLE_DATE_REGEX = re.compile(r'''
 
 def check_date(date):
     day, month, year = map(int, re.compile('[/-]').split(date))
-    if  12 < month or year < 1000 or 2999 < year:
+    if 12 < month or year < 1000 or 2999 < year:
         return False
     if month in (4, 6, 9, 11):
         return 1 <= day <= 30

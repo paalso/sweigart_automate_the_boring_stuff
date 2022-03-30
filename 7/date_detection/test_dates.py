@@ -1,4 +1,4 @@
-from date_detection import normalize_date, check_date
+from detect_dates import normalize_date
 
 
 def test_normalize_date():

@@ -28,7 +28,7 @@ def check_password(token):
            re.search('\d', token) and \
            re.search('[a-z]', token) and \
            re.search('[A-Z]', token) and \
-           re.search("[!#$%&'()*+,-./:;<=>?@[\]^_`{|}~]", token)
+           re.search("[!#$%&'()*+,-./:;<=>?@[]^_`{|}~]", token)
 
 
 assert check_password(r'as*cL_JLK5')
