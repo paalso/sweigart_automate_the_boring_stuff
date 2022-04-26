@@ -67,47 +67,46 @@ Date:
 
 Period:
 
-                    State Capitals Quiz (Form 1)
-
+                    State Capitals Quiz (Form {})
 
 '''
 
 def generate_quiz_item(item_num: int,
                        state: str,
                        capitals: list,
-                       answers_num=4):
+                       answers_number=4):
+    answers_ids = 'ABCDEFFGHIJ'[:answers_number]
     answers = [correct_answer := capitals[state]]
     possible_answers = list(capitals.values())
     possible_answers.remove(correct_answer)
-    random.shuffle(possible_answers)
-    answers.extend(possible_answers[:answers_num - 1])
+    answers.extend(random.sample(possible_answers, answers_number - 1))
     random.shuffle(answers)
 
-    correct_answer = chr(ord('A') + answers.index(correct_answer))
+    correct_answer = answers_ids[answers.index(correct_answer)]
     quiz_item_options = (
-        f'    {chr(ord("A") + i)}. {answer}' for i, answer in enumerate(answers) 
+        f'    {answers_ids[i]}. {answer}' for i, answer in enumerate(answers) 
     )
     quiz_text = f'{item_num}. What is the capital of {state}?\n' + \
                 '\n'.join(quiz_item_options) + '\n'
     return (quiz_text, correct_answer)
 
 
-def generate_quiz():
-    quiz = quiz_header
+def generate_quiz(num: int):
+    quiz_content = [quiz_header.format(num)]
     answers = []
     states = list(CAPITALS.keys())
     random.shuffle(states)
 
     for i, state in enumerate(states):
         quiz_item, answer = generate_quiz_item(i + 1, state, CAPITALS)
-        quiz += quiz_item
+        quiz_content.append(quiz_item)
         answers.append(f'{i + 1}. {answer}')
     
-    return (quiz, '\n'.join(answers))
+    return ('\n'.join(quiz_content), '\n'.join(answers))
 
 
 def generate_quiz_files(num: int):
-    quiz, answers = generate_quiz()
+    quiz, answers = generate_quiz(num)
     with open(f'capitalsquiz{num}.txt', 'w') as f:
         f.write(quiz)
     with open(f'capitalsquiz_answers{num}.txt', 'w') as f:
