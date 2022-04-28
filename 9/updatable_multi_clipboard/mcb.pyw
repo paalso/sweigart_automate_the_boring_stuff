@@ -10,14 +10,25 @@ import pyperclip
 import shelve
 
 
+def print_n_copy(content):
+    print(content)
+    pyperclip.copy(str(content))
+
+
 def get_args():
     parser = argparse.ArgumentParser(
-        description='Update / get data from Multi Clipboard')
-    parser.add_argument('keywords', nargs='+',
-        help='keywords to save (--save == True) / load (--save == False)' +\
-            ' clipboard to / from')
-    parser.add_argument('-s', '--save', default=False, action="store_true",
-        help='saves clipboard to keyword')
+        description = 'Saves and loads pieces of text to the clipboard.')
+    parser.add_argument('keyword', nargs='?',
+        help='keyword to save / load clipboard to / from')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-s', '--save', action="store_true",
+        help='saves clipboard to the keyword')
+    group.add_argument('-l', '--list', action='store_true',
+        help='loads all keywords to clipboard')
+    group.add_argument('-d', '--delete', default=False, action='store_true',
+        help='delete the keyword from the shelf')
+    group.add_argument('-c', '--clear', default=False, action='store_true',
+        help='clears the shelf')
     return parser.parse_args()
 
 
@@ -25,10 +36,19 @@ def main():
     args = get_args()
     with shelve.open('mcb.dat') as mcb_shelf:
         if args.save:
-            for key in args.keywords:
-                mcb_shelf[key] = pyperclip.paste()
+            mcb_shelf[args.keyword] = pyperclip.paste()
+        elif args.list:
+            print_n_copy(list(mcb_shelf.keys()))
+        elif args.delete:
+            mcb_shelf.pop(args.keyword, None)
+        elif args.clear:
+            mcb_shelf.clear()
         else:
-            pyperclip.copy('\n'.join(mcb_shelf[key] for key in args.keywords if key in mcb_shelf))
+            if args.keyword in mcb_shelf:
+                print_n_copy(mcb_shelf[args.keyword])
+            else:
+                print(f'Keyword \'{args.keyword}\' not found')
+                pyperclip.copy('')
 
 
 if __name__ == '__main__':
