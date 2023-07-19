@@ -17,7 +17,7 @@ def print_n_copy(content):
     pyperclip.copy(str(content))
 
 
-def get_args():
+def get_parser():
     parser = argparse.ArgumentParser(
         description = 'Saves and loads pieces of text to the clipboard.')
     parser.add_argument('keyword', nargs='?',
@@ -31,11 +31,17 @@ def get_args():
         help='delete the keyword from the shelf')
     group.add_argument('-c', '--clear', default=False, action='store_true',
         help='clears the shelf')
-    return parser.parse_args()
+    return parser
 
 
 def main():
-    args = get_args()
+    parser = get_parser()
+    args = parser.parse_args()
+
+    if not any(vars(args).values()):
+        parser.print_help()
+        return
+
     with shelve.open('mcb.dat') as mcb_shelf:
         if args.save:
             mcb_shelf[args.keyword] = pyperclip.paste()
@@ -46,6 +52,8 @@ def main():
         elif args.clear:
             mcb_shelf.clear()
         else:
+            if args.keyword is None:
+                print('NONE')
             if args.keyword in mcb_shelf:
                 print_n_copy(mcb_shelf[args.keyword])
             else:
