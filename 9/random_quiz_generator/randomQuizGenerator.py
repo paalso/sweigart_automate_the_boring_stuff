@@ -1,64 +1,14 @@
 #!/usr/bin/env python3
+
 # randomQuizGenerator.py - Creates quizzes with questions and answers in
 # random order, along with the answer key.
 
 import random
+import string
+from capitals import CAPITALS
 
-# The quiz data. Keys are states and values are their capitals.
-CAPITALS = {
-    'Alabama': 'Montgomery',
-    'Alaska': 'Juneau',
-    'Arizona': 'Phoenix',
-    'Arkansas': 'Little Rock',
-    'California': 'Sacramento',
-    'Colorado': 'Denver',
-    'Connecticut': 'Hartford',
-    'Delaware': 'Dover',
-    'Florida': 'Tallahassee',
-    'Georgia': 'Atlanta',
-    'Hawaii': 'Honolulu',
-    'Idaho': 'Boise',
-    'Illinois': 'Springfield',
-    'Indiana': 'Indianapolis',
-    'Iowa': 'Des Moines',
-    'Kansas': 'Topeka',
-    'Kentucky': 'Frankfort',
-    'Louisiana': 'Baton Rouge',
-    'Maine': 'Augusta',
-    'Maryland': 'Annapolis',
-    'Massachusetts': 'Boston',
-    'Michigan': 'Lansing',
-    'Minnesota': 'Saint Paul',
-    'Mississippi': 'Jackson',
-    'Missouri': 'Jefferson City',
-    'Montana': 'Helena',
-    'Nebraska': 'Lincoln',
-    'Nevada': 'Carson City',
-    'New Hampshire': 'Concord',
-    'New Jersey': 'Trenton',
-    'New Mexico': 'Santa Fe',
-    'New York': 'Albany',
-    'North Carolina': 'Raleigh',
-    'North Dakota': 'Bismarck',
-    'Ohio': 'Columbus',
-    'Oklahoma': 'Oklahoma City',
-    'Oregon': 'Salem',
-    'Pennsylvania': 'Harrisburg',
-    'Rhode Island': 'Providence',
-    'South Carolina': 'Columbia',
-    'South Dakota': 'Pierre',
-    'Tennessee': 'Nashville',
-    'Texas': 'Austin',
-    'Utah': 'Salt Lake City',
-    'Vermont': 'Montpelier',
-    'Virginia': 'Richmond',
-    'Washington': 'Olympia',
-    'West Virginia': 'Charleston',
-    'Wisconsin': 'Madison',
-    'Wyoming': 'Cheyenne'
-}
-
-NUMBER_OF_QUIZES = 3
+NUMBER_OF_QUIZES = 2
+ANSWERS_NUMBER = 4
 
 quiz_header = \
 '''Name:
@@ -71,11 +21,12 @@ Period:
 
 '''
 
+
 def generate_quiz_item(item_num: int,
                        state: str,
                        capitals: list,
-                       answers_number=4):
-    answers_ids = 'ABCDEFFGHIJ'[:answers_number]
+                       answers_number=ANSWERS_NUMBER):
+    answers_ids = string.ascii_uppercase[:answers_number]
     answers = [correct_answer := capitals[state]]
     possible_answers = list(capitals.values())
     possible_answers.remove(correct_answer)
@@ -101,7 +52,7 @@ def generate_quiz(num: int):
         quiz_item, answer = generate_quiz_item(i + 1, state, CAPITALS)
         quiz_content.append(quiz_item)
         answers.append(f'{i + 1}. {answer}')
-    
+
     return ('\n'.join(quiz_content), '\n'.join(answers))
 
 
@@ -114,8 +65,8 @@ def generate_quiz_files(num: int):
 
 
 def main():
-    for i in range(NUMBER_OF_QUIZES):
-        generate_quiz_files(i + 1)
+    for i in range(1, NUMBER_OF_QUIZES + 1):
+        generate_quiz_files(i)
 
 
 if __name__ == '__main__':
