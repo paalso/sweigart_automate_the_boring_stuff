@@ -2,12 +2,11 @@
 
 # Searches for any line that matches a user-supplied regular expression in
 # all files in a folder that matches a given file mask
-# regfind -p './subdir*' -m '\d{2+}
+# regfind -p './subdir*' '\d{2+}'
 
 import argparse
 import colorama
 import glob
-import os
 import re
 
 PARSER_DESCRIPTION = \
@@ -28,12 +27,12 @@ def get_args():
         help='regular expression to search in the specified files')
 
     parser.add_argument(
-        '-p', '--path',
+        '-m', '--mask',
         default='*',
         help='path to the files to search, default is current directory')
 
     args = parser.parse_args()
-    return args.regex, args.path
+    return args.regex, args.mask
 
 
 def print_line(line, regex, filename, first_find_flag):
@@ -78,15 +77,17 @@ def print_filename(filename):
           colorama.Style.RESET_ALL)
 
 
+def process(regex, file_mask):
+    for path in sorted(glob.glob(file_mask)):
+        print_file_matched_lines(path, regex)
+
+
 def main():
-    regex, template_path = get_args()
+    regex, file_mask = get_args()
     regex = re.compile(regex)
 
     colorama.init()
-
-    for path in sorted(glob.glob(template_path)):
-        if os.path.isfile(path):
-            print_file_matched_lines(path, regex)
+    process(regex, file_mask)
 
 
 if __name__ == '__main__':
