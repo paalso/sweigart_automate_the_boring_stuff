@@ -7,6 +7,7 @@
 import argparse
 import colorama
 import glob
+import os
 import re
 
 PARSER_DESCRIPTION = \
@@ -79,7 +80,8 @@ def print_filename(filename):
 
 def process(regex, file_mask):
     for path in sorted(glob.glob(file_mask)):
-        print_file_matched_lines(path, regex)
+        if os.path.isfile(path):
+            print_file_matched_lines(path, regex)
 
 
 def main():
