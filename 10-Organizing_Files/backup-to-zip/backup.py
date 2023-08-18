@@ -6,9 +6,12 @@ Backing Up a Folder into a ZIP File
 '''
 
 import argparse
-import shutil
+import os
 import zipfile
 from pathlib import Path
+
+PATH_NOT_EXIST = 2
+FAILED_ARCHIVE_CREATION = 3
 
 
 def get_parser():
@@ -61,17 +64,27 @@ def get_full_dir_path(filename):
 
 def zip_path(path):
     path_name = path.name
-    print(path_name)
-
     new_name = get_new_archive_name(path_name)
-    print(new_name)
 
-    new_zip = zipfile.ZipFile(new_name, 'w')
-    if Path.is_file(path):
-        new_zip.write(path_name, compress_type=zipfile.ZIP_DEFLATED)
-    else:
-        print('DIRECTORY!')
-    new_zip.close()
+    try:
+        new_zip = zipfile.ZipFile(new_name, 'w')
+        if Path.is_file(path):
+            new_zip.write(path_name, compress_type=zipfile.ZIP_DEFLATED)
+        else:
+            for dir_name, _, filenames in os.walk(path):
+                for filename in filenames:
+                    file_path = os.path.join(dir_name, filename)
+                    archive_path = \
+                        os.path.join(path_name,
+                                     os.path.relpath(file_path, path))
+                    new_zip.write(file_path, arcname=archive_path)
+        new_zip.close()
+        print(f'Archive {new_name} created')
+        return 0
+
+    except Exception:
+        print(f'Fail to archive {path_name}')
+        return FAILED_ARCHIVE_CREATION
 
 
 def main():
@@ -82,9 +95,9 @@ def main():
 
     if not Path.exists(path):
         print(f'Error: {path_name} does not exist')
-        exit(2)
+        exit(PATH_NOT_EXIST)
 
-    zip_path(path)
+    return zip_path(path)
 
 
 if __name__ == '__main__':
