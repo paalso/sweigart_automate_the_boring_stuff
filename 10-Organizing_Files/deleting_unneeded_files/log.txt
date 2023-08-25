@@ -1,0 +1,35 @@
+~/Sandbox/deleting_unneeded_files (main)$ l
+total 16K
+drwxrwxr-x 4 paalso paalso 4.0K Aug 25 17:36 subdir
+-rwxrwxr-x 1 paalso paalso 4.1K Aug 25 18:05 find_big_files.py
+-rw-rw-r-- 1 paalso paalso  493 Aug 25 18:06 text_document.txt
+
+~/Sandbox/deleting_unneeded_files (main)$ tree
+.
+├── find_big_files.py
+├── subdir
+│   ├── Rubik.zip
+│   ├── subdir1
+│   │   ├── rus-ukr-dic.rar
+│   │   └── USh_Celebnye-travy.zip
+│   └── subdir2
+│       └── Open_Sans.zip
+└── text_document.txt
+
+
+~/Sandbox/deleting_unneeded_files (main)$ ./find_big_files.py subdir/ 1mb -d
+26,778,052 subdir/
+17,215,147 subdir/subdir1
+5,943,525  subdir/subdir2
+
+10,144,241 subdir/subdir1/rus-ukr-dic.rar
+7,070,906  subdir/subdir1/USh_Celebnye-travy.zip
+5,943,525  subdir/subdir2/Open_Sans.zip
+3,619,380  subdir/Rubik.zip
+
+~/Sandbox/deleting_unneeded_files (main)$ ./find_big_files.py not_existing_subdir/ 1mb -d
+No such directory: not_existing_subdir/
+
+~/Sandbox/deleting_unneeded_files (main)$ echo $?
+2
+
